@@ -38,7 +38,7 @@ def inverse_equations(Robs, Mobs, Vobs):
     vest = sign(Robs - 0.5) * ((L*(((Robs**2)*(L)) - (Robs*L) + Robs - 0.5)) / Vobs)**0.25
     epsilon = 1e-10  # Small value to avoid division by zero
     aest = L / (vest + epsilon)
-    Test = Mobs - (aest / (2 * vest)) * ((1 - np.exp(-vest * aest)) / (1 + np.exp(-vest * aest)))
+    Test = Mobs - (aest / (2 * vest + epsilon)) * ((1 - np.exp(-vest * aest)) / (1 + np.exp(-vest * aest) + epsilon))
     return vest, aest, Test
 
 def simulate_and_recover(N, iterations):
@@ -69,6 +69,8 @@ all_squared_errors = []
 
 for N in sample_sizes:
     biases, squared_errors = simulate_and_recover(N, 1000)
+    all_biases.append(biases)
+    all_squared_errors.append(squared_errors)
     for bias, squared_error in zip(biases, squared_errors):
         results.append({
             'N': N,
