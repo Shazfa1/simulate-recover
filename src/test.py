@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from simulate-recover import forward_equations, inverse_equations, simulate_observed
+from simulate_recover import forward_equations, inverse_equations, simulate_observed
 
 class TestEZDiffusion(unittest.TestCase):
 
