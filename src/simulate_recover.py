@@ -10,9 +10,6 @@ def test_no_noise():
     assert np.allclose(b, 0, atol=1e-6), f"Bias should be 0 when there's no noise, but got {b}"
     print("No-noise test passed successfully.")
 
-# Call this function before running the main simulation
-test_no_noise()
-
 def forward_equations(v, a, T):
     Rpred = 1 / (1 + np.exp(-2 * v * a))
     Mpred = (a / (2 * v)) * ((1 - np.exp(-2 * v * a)) / (1 + np.exp(-2 * v * a))) + T
@@ -49,6 +46,9 @@ def simulate_and_recover(N, iterations):
         squared_errors.append(np.sum(bias**2))
     
     return np.array(biases), np.array(squared_errors)
+
+# Call this function before running the main simulation
+test_no_noise()
 
 # Run simulations
 sample_sizes = [10, 40, 4000]
