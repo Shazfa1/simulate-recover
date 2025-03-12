@@ -32,6 +32,8 @@ def sign(x):
         return 0
 
 def inverse_equations(Robs, Mobs, Vobs):
+    epsilon = 1e-10  # Small value to avoid division by zero
+    Robs = np.clip(Robs, epsilon, 1 - epsilon)  # Clip Robs to avoid 0 or 1
     L = np.log(Robs / (1-Robs))
     vest = sign(Robs - 0.5) * ((L*(((Robs**2)*(L)) - (Robs*L) + Robs - 0.5)) / Vobs)**0.25
     aest = L / vest
