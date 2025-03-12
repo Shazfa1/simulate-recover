@@ -11,9 +11,10 @@ def test_no_noise():
     print("No-noise test passed successfully.")
 
 def forward_equations(v, a, T):
-    Rpred = 1 / (1 + np.exp(-2 * v * a))
-    Mpred = (a / (2 * v)) * ((1 - np.exp(-2 * v * a)) / (1 + np.exp(-2 * v * a))) + T
-    Vpred = (a**2 / (4 * v**2)) * ((1 - np.exp(-4 * v * a)) / (1 + np.exp(-2 * v * a))) - ((a / (2 * v)) * ((1 - np.exp(-2 * v * a)) / (1 + np.exp(-2 * v * a))))**2
+    y = np.exp(-1*a*v)
+    Rpred = 1 / (1 + y)
+    Mpred = (a / (2 * v)) * ((1 - y) / (1 + y)) + T
+    Vpred = (a / (2* v**3)) * ((1 - 2*z*v*y - y**2) / (y + 1)**2)
     return Rpred, Mpred, Vpred
 
 def sampling_distribution(Rpred, Mpred, Vpred, N):
