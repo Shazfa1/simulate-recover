@@ -2,6 +2,17 @@ import numpy as np
 from scipy.stats import norm, binom, gamma
 import matplotlib.pyplot as plt
 
+def test_no_noise():
+    v, a, T = 1.0, 1.5, 0.3  # Example true parameters
+    Rpred, Mpred, Vpred = forward_equations(v, a, T)
+    vest, aest, Test = inverse_equations(Rpred, Mpred, Vpred)
+    b = np.array([v, a, T]) - np.array([vest, aest, Test])
+    assert np.allclose(b, 0, atol=1e-6), f"Bias should be 0 when there's no noise, but got {b}"
+    print("No-noise test passed successfully.")
+
+# Call this function before running the main simulation
+test_no_noise()
+
 def forward_equations(v, a, T):
     Rpred = 1 / (1 + np.exp(-2 * v * a))
     Mpred = (a / (2 * v)) * ((1 - np.exp(-2 * v * a)) / (1 + np.exp(-2 * v * a))) + T
