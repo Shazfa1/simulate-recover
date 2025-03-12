@@ -2,9 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def load_results(filename):
-    # Load results from file
-    # This function should be implemented based on how you've saved your results
-    pass
+    return np.load(filename, allow_pickle=True)
 
 def analyze_bias(results):
     biases = np.array([r['bias'] for r in results])
