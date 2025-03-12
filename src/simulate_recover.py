@@ -22,9 +22,17 @@ def sampling_distribution(Rpred, Mpred, Vpred, N):
     Vobs = gamma.rvs((N - 1) / 2, scale=2 * Vpred / (N - 1))
     return Robs, Mobs, Vobs
 
+def sign(x):
+    if x < 0:
+        return -1
+    elif x > 0:
+        return 1
+    else:
+        return 0
+
 def inverse_equations(Robs, Mobs, Vobs):
     s = Mobs / Vobs
-    vest = np.sign(Robs - 0.5) * ((7 * Robs**2 - 7 * Robs + 4) / (Vobs * (Robs**2 - Robs + 0.5)))**0.25
+    vest = sign(Robs - 0.5) * ((7 * Robs**2 - 7 * Robs + 4) / (Vobs * (Robs**2 - Robs + 0.5)))**0.25
     aest = s * vest * Mobs
     Test = Mobs - (aest / (2 * vest)) * ((1 - np.exp(-2 * vest * aest)) / (1 + np.exp(-2 * vest * aest)))
     return vest, aest, Test
