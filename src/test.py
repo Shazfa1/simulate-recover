@@ -23,7 +23,7 @@ class TestEZDiffusion(unittest.TestCase):
     def test_simulate_observed(self):
         Rpred, Mpred, Vpred = 0.7, 1.2, 0.4
         N = 100
-        Robs, Mobs, Vobs = simulate_observed(Rpred, Mpred, Vpred, N)
+        Robs, Mobs, Vobs = simulate_and_recover(Rpred, Mpred, Vpred, N)
         self.assertIsNotNone(Robs)
         self.assertIsNotNone(Mobs)
         self.assertIsNotNone(Vobs)
@@ -51,7 +51,7 @@ class TestEZDiffusion(unittest.TestCase):
         N = 10000  # Large sample size for more accurate recovery
         
         Rpred, Mpred, Vpred = forward_equations(v_true, a_true, T_true)
-        Robs, Mobs, Vobs = simulate_observed(Rpred, Mpred, Vpred, N)
+        Robs, Mobs, Vobs = simulate_and_recover(Rpred, Mpred, Vpred, N)
         v_est, a_est, T_est = inverse_equations(Robs, Mobs, Vobs)
         
         # Assert that estimated parameters are close to true parameters
@@ -67,13 +67,13 @@ class TestEZDiffusion(unittest.TestCase):
         Rpred, Mpred, Vpred = forward_equations(v_true, a_true, T_true)
         
         # Small sample size
-        Robs_small, Mobs_small, Vobs_small = simulate_observed(Rpred, Mpred, Vpred, N_small)
+        Robs_small, Mobs_small, Vobs_small = simulate_and_recover(Rpred, Mpred, Vpred, N_small)
         v_est_small, a_est_small, T_est_small = inverse_equations(Robs_small, Mobs_small, Vobs_small)
         bias_small = np.array([v_true, a_true, T_true]) - np.array([v_est_small, a_est_small, T_est_small])
         squared_error_small = np.sum(bias_small ** 2)
         
         # Large sample size
-        Robs_large, Mobs_large, Vobs_large = simulate_observed(Rpred, Mpred, Vpred, N_large)
+        Robs_large, Mobs_large, Vobs_large = simulate_and_recover(Rpred, Mpred, Vpred, N_large)
         v_est_large, a_est_large, T_est_large = inverse_equations(Robs_large, Mobs_large, Vobs_large)
         bias_large = np.array([v_true, a_true, T_true]) - np.array([v_est_large, a_est_large, T_est_large])
         squared_error_large = np.sum(bias_large ** 2)
