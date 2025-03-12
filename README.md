@@ -1,5 +1,5 @@
 simulate-recover
-Based on the provided document, I can describe the simulate-and-recover exercise for the EZ diffusion model and its conclusions. Here's a 500-word summary:
+
 
 The simulate-and-recover exercise is designed to test how well the EZ diffusion model can recover its own parameters. This is a crucial step in validating the model's effectiveness and reliability. The process involves several key steps:
 
