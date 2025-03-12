@@ -60,7 +60,7 @@ def simulate_and_recover(N, iterations):
 
 # Call this function before running the main simulation
 test_no_noise()
-
+results = []
 # Run simulations
 sample_sizes = [10, 40, 4000]
 all_biases = []
@@ -68,12 +68,18 @@ all_squared_errors = []
 
 for N in sample_sizes:
     biases, squared_errors = simulate_and_recover(N, 1000)
-    all_biases.append(biases)
-    all_squared_errors.append(squared_errors)
+    for bias, squared_error in zip(biases, squared_errors):
+        results.append({
+            'N': N,
+            'bias': bias,
+            'squared_error': squared_error
+        })
     print(f"N = {N}:")
     print(f"Average bias: {np.mean(biases, axis=0)}")
     print(f"Average squared error: {np.mean(squared_errors)}")
     print()
+
+np.save('simulation_results.npy', results)
 
 # Plot results
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
