@@ -31,10 +31,10 @@ def sign(x):
         return 0
 
 def inverse_equations(Robs, Mobs, Vobs):
-    s = Mobs / Vobs
+    L = np.log(1 - Robs) / Robs
     vest = sign(Robs - 0.5) * ((7 * Robs**2 - 7 * Robs + 4) / (Vobs * (Robs**2 - Robs + 0.5)))**0.25
-    aest = s * vest * Mobs
-    Test = Mobs - (aest / (2 * vest)) * ((1 - np.exp(-2 * vest * aest)) / (1 + np.exp(-2 * vest * aest)))
+    aest = L / vest
+    Test = Mobs - (aest / (2 * vest)) * ((1 - np.exp(-vest * aest)) / (1 + np.exp(-vest * aest)))
     return vest, aest, Test
 
 def simulate_and_recover(N, iterations):
