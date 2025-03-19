@@ -64,7 +64,7 @@ def inverse_equations(Robs, Mobs, Vobs):
     if denominator < epsilon:
         raise ValueError("Denominator in Test calculation is too close to zero")
 
-    Test = Mobs - (aest / (2 * vest)) * ((1 - np.exp(-vest * aest)) / denominator)
+    Test = Mobs - ((aest / (2 * vest)) * ((1 - np.exp(-vest * aest)) / denominator))
 
     # Check for negative Test
     if Test < 0:
