@@ -32,9 +32,6 @@ def sign(x):
         return 0
 
 def inverse_equations(Robs, Mobs, Vobs):
-
-
-def inverse_equations(Robs, Mobs, Vobs):
     epsilon = 1e-10  # Small value to avoid division by zero
 
     # Check for invalid input values
