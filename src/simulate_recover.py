@@ -19,8 +19,8 @@ def forward_equations(v, a, T):
 
 def sampling_distribution(Rpred, Mpred, Vpred, N):
     Robs = binom.rvs(N, Rpred) / N
-    Mobs = norm.rvs(Mpred, np.sqrt(Vpred / N))
-    Vobs = gamma.rvs((N - 1) / 2, scale=2 * Vpred / (N - 1))
+    Mobs = norm.rvs(Mpred, (Vpred / N))
+    Vobs = gamma.rvs((N - 1) / 2, ((2 * Vpred) / (N - 1)))
     return Robs, Mobs, Vobs
 
 def sign(x):
@@ -71,15 +71,6 @@ def inverse_equations(Robs, Mobs, Vobs):
         raise ValueError(f"Calculated Test is negative: {Test}")
 
     return vest, aest, Test
-
-def sign(x):
-    if x < 0:
-        return -1
-    elif x > 0:
-        return 1
-    else:
-        return 0
-
 def simulate_and_recover(N, iterations):
     biases = []
     squared_errors = []
