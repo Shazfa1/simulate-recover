@@ -20,66 +20,48 @@ class TestEZDiffusion(unittest.TestCase):
         self.assertIsNotNone(Test)
         # Add more specific assertions based on expected values
 
-    def test_simulate_observed(self):
-        Rpred, Mpred, Vpred = 0.7, 1.2, 0.4
-        N = 100
-        Robs, Mobs, Vobs = simulate_and_recover(Rpred, Mpred, Vpred, N)
-        self.assertIsNotNone(Robs)
-        self.assertIsNotNone(Mobs)
-        self.assertIsNotNone(Vobs)
-        # Add more specific assertions based on expected values
-
     def test_no_noise_case(self):
-        # Test the case when there's no noise (slide 17)
         v_true, a_true, T_true = 0.5, 1.0, 0.3
         Rpred, Mpred, Vpred = forward_equations(v_true, a_true, T_true)
-        
-        # In the no-noise case, observed should equal predicted
-        Robs, Mobs, Vobs = Rpred, Mpred, Vpred
-        
-        v_est, a_est, T_est = inverse_equations(Robs, Mobs, Vobs)
-        
-        # Calculate bias
+        v_est, a_est, T_est = inverse_equations(Rpred, Mpred, Vpred)
         bias = np.array([v_true, a_true, T_true]) - np.array([v_est, a_est, T_est])
-        
-        # Assert that bias is close to zero (use np.allclose for floating-point comparison)
         self.assertTrue(np.allclose(bias, np.zeros(3), atol=1e-6))
 
-    def test_parameter_recovery(self):
-        # Test if parameters can be recovered accurately
-        v_true, a_true, T_true = 0.5, 1.0, 0.3
-        N = 10000  # Large sample size for more accurate recovery
+    def test_simulate_and_recover(self):
+        sample_sizes = [10, 40, 4000]
+        iterations = 1000
         
-        Rpred, Mpred, Vpred = forward_equations(v_true, a_true, T_true)
-        Robs, Mobs, Vobs = simulate_and_recover(Rpred, Mpred, Vpred, N)
-        v_est, a_est, T_est = inverse_equations(Robs, Mobs, Vobs)
-        
-        # Assert that estimated parameters are close to true parameters
-        self.assertAlmostEqual(v_true, v_est, places=2)
-        self.assertAlmostEqual(a_true, a_est, places=2)
-        self.assertAlmostEqual(T_true, T_est, places=2)
+        for N in sample_sizes:
+            biases, squared_errors = simulate_and_recover(N, iterations)
+            
+            # Check shape of results
+            self.assertEqual(biases.shape, (iterations, 3))
+            self.assertEqual(squared_errors.shape, (iterations,))
+            
+            # Check average bias is close to 0
+            avg_bias = np.mean(biases, axis=0)
+            self.assertTrue(np.allclose(avg_bias, np.zeros(3), atol=0.1))
+            
+            # Store average squared error for comparison
+            if N == 10:
+                prev_avg_squared_error = np.mean(squared_errors)
+            else:
+                curr_avg_squared_error = np.mean(squared_errors)
+                # Check that squared error decreases with increasing N
+                self.assertLess(curr_avg_squared_error, prev_avg_squared_error)
+                prev_avg_squared_error = curr_avg_squared_error
 
-    def test_sample_size_effect(self):
-        # Test if increasing sample size decreases squared error
-        v_true, a_true, T_true = 0.5, 1.0, 0.3
-        N_small, N_large = 100, 10000
+    def test_parameter_ranges(self):
+        N = 1000
+        iterations = 100
+        biases, _ = simulate_and_recover(N, iterations)
         
-        Rpred, Mpred, Vpred = forward_equations(v_true, a_true, T_true)
+        # Check if recovered parameters are within expected ranges
+        v_est, a_est, T_est = biases + np.array([1.25, 1.25, 0.3])  # Add mean of range to biases
         
-        # Small sample size
-        Robs_small, Mobs_small, Vobs_small = simulate_and_recover(Rpred, Mpred, Vpred, N_small)
-        v_est_small, a_est_small, T_est_small = inverse_equations(Robs_small, Mobs_small, Vobs_small)
-        bias_small = np.array([v_true, a_true, T_true]) - np.array([v_est_small, a_est_small, T_est_small])
-        squared_error_small = np.sum(bias_small ** 2)
-        
-        # Large sample size
-        Robs_large, Mobs_large, Vobs_large = simulate_and_recover(Rpred, Mpred, Vpred, N_large)
-        v_est_large, a_est_large, T_est_large = inverse_equations(Robs_large, Mobs_large, Vobs_large)
-        bias_large = np.array([v_true, a_true, T_true]) - np.array([v_est_large, a_est_large, T_est_large])
-        squared_error_large = np.sum(bias_large ** 2)
-        
-        # Assert that squared error decreases with larger sample size
-        self.assertLess(squared_error_large, squared_error_small)
+        self.assertTrue(np.all((v_est >= 0.5) & (v_est <= 2)))
+        self.assertTrue(np.all((a_est >= 0.5) & (a_est <= 2)))
+        self.assertTrue(np.all((T_est >= 0.1) & (T_est <= 0.5)))
 
 if __name__ == '__main__':
     unittest.main()
