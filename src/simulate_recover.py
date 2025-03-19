@@ -32,14 +32,56 @@ def sign(x):
         return 0
 
 def inverse_equations(Robs, Mobs, Vobs):
+
+
+def inverse_equations(Robs, Mobs, Vobs):
     epsilon = 1e-10  # Small value to avoid division by zero
+
+    # Check for invalid input values
+    if not (0 <= Robs <= 1):
+        raise ValueError(f"Robs must be between 0 and 1, got {Robs}")
+    if Mobs <= 0:
+        raise ValueError(f"Mobs must be positive, got {Mobs}")
+    if Vobs <= 0:
+        raise ValueError(f"Vobs must be positive, got {Vobs}")
+
+    # Clip Robs to avoid 0 or 1
     Robs = np.clip(Robs, epsilon, 1 - epsilon)  # Clip Robs to avoid 0 or 1
+
     L = np.log(Robs / (1-Robs))
+
+    # Check for potential division by zero or negative values under root
+    if Vobs == 0 or (Robs**2 * L - Robs * L + Robs - 0.5) <= 0:
+        raise ValueError("Invalid combination of Robs and Vobs")
+
     vest = sign(Robs - 0.5) * ((L*(((Robs**2)*(L)) - (Robs*L) + Robs - 0.5)) / Vobs)**0.25
-    epsilon = 1e-10  # Small value to avoid division by zero
+
+    # Check for division by zero
+    if abs(vest) < epsilon:
+        raise ValueError("vest is too close to zero, causing division issues")
+
     aest = L / (vest + epsilon)
-    Test = Mobs - (aest / (2 * vest + epsilon)) * ((1 - np.exp(-vest * aest)) / (1 + np.exp(-vest * aest) + epsilon))
+
+    # Check for potential issues in Test calculation
+    denominator = 1 + np.exp(-vest * aest)
+    if denominator < epsilon:
+        raise ValueError("Denominator in Test calculation is too close to zero")
+
+    Test = Mobs - (aest / (2 * vest)) * ((1 - np.exp(-vest * aest)) / denominator)
+
+    # Check for negative Test
+    if Test < 0:
+        raise ValueError(f"Calculated Test is negative: {Test}")
+
     return vest, aest, Test
+
+def sign(x):
+    if x < 0:
+        return -1
+    elif x > 0:
+        return 1
+    else:
+        return 0
 
 def simulate_and_recover(N, iterations):
     biases = []
