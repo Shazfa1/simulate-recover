@@ -19,8 +19,14 @@ def forward_equations(v, a, T):
 
 def sampling_distribution(Rpred, Mpred, Vpred, N):
     Robs = binom.rvs(N, Rpred) / N
-    Mobs = norm.rvs(Mpred, (Vpred / N))
-    Vobs = gamma.rvs((N - 1) / 2, ((2 * Vpred) / (N - 1)))
+    Robs = np.clip(Robs, 0, 1)  # Ensure Robs is between 0 and 1
+
+    Mobs = norm.rvs(Mpred, np.sqrt(Vpred / N))
+    Mobs = max(0, Mobs)  # Ensure Mobs is non-negative
+
+    Vobs = gamma.rvs((N - 1) / 2, scale=2 * Vpred / (N - 1))
+    Vobs = max(0, Vobs)  # Ensure Vobs is non-negative
+
     return Robs, Mobs, Vobs
 
 def sign(x):
