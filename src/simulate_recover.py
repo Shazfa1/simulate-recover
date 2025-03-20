@@ -61,6 +61,7 @@ def inverse_equations(Robs, Mobs, Vobs):
 
     # Check for potential division by zero or negative values under root
     if Vobs == 0 or (Robs**2 * L - Robs * L + Robs - 0.5) <= 0:
+        print(f"Putting following into the inverse")
         print(f"Robs: {Robs}")
         print(f"Vobs: {Vobs}")
         raise ValueError("Invalid combination of Robs and Vobs")
