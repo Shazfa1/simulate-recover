@@ -15,11 +15,6 @@ def forward_equations(v, a, T):
     Rpred = 1 / (1 + y)
     Mpred = T + ((a / (2 * v)) * ((1 - y) / (1 + y)))
     Vpred = (a / (2* v**3)) * ((1 - 2*a*v*y - y**2) / (y + 1)**2)
-
-    print(f"Forward equations results:")
-    print(f"Rpred: {Rpred}")
-    print(f"Mpred: {Mpred}")
-    print(f"Vpred: {Vpred}")
     
     return Rpred, Mpred, Vpred
 
@@ -39,10 +34,6 @@ def sampling_distribution(Rpred, Mpred, Vpred, N, epsilon=0.1):
             Mobs = norm.rvs(Mpred, (Vpred / N))
         if Vobs <= 0:
             Vobs = gamma.rvs((N - 1) / 2, scale=2 * Vpred / (N - 1))
-    print(f"Sampling distribution results:")
-    print(f"Robs: {Robs}")
-    print(f"Mobs: {Mobs}")
-    print(f"Vobs: {Vobs}")
     return Robs, Mobs, Vobs
 
 def sign(x):
@@ -61,11 +52,10 @@ def inverse_equations(Robs, Mobs, Vobs):
 
     # Clip Robs to avoid 0 or 1
     Robs = np.clip(Robs, epsilon, 1 - epsilon)  # Clip Robs to avoid 0 or 1
-    Robs = Robs + epsilon
+    #Robs = Robs + epsilon
 
     L = np.log(Robs / (1-Robs))
     print(f"Putting following into the inverse")
-    
     print(f"Robs: {Robs}")
     print(f"Mobs: {Mobs}")
     print(f"Vobs: {Vobs}")
@@ -81,16 +71,11 @@ def inverse_equations(Robs, Mobs, Vobs):
         raise ValueError("vest is too close to zero, causing division issues")
 
     aest = L / (vest + epsilon)
-    print(f"aest: {aest}")
 
     # Check for potential issues in Test calculation
     denominator = 1 + np.exp(-vest * aest)
     if denominator < epsilon:
         raise ValueError("Denominator in Test calculation is too close to zero")
-
-    print(f"part one:")
-    print(f"{((aest / (2 * vest)))}")
-    print(f"{((1 - np.exp(-vest * aest)) / denominator)}")
     
     Test = (Mobs + epsilon) - ((aest / (2 * vest)) * ((1 - np.exp(-vest * aest)) / denominator))
     Test = max(0, Test)
