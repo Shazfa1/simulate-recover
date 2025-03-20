@@ -19,23 +19,20 @@ def forward_equations(v, a, T):
 
 def sampling_distribution(Rpred, Mpred, Vpred, N):
     Robs = binom.rvs(N, Rpred) / N
-    Robs = np.clip(Robs, 0, 1)  # Ensure Robs is between 0 and 1
-
-    Mobs = norm.rvs(Mpred, np.sqrt(Vpred / N))
-    Mobs = max(0, Mobs)  # Ensure Mobs is non-negative
-
+    Mobs = norm.rvs(Mpred, (Vpred / N))
     Vobs = gamma.rvs((N - 1) / 2, scale=2 * Vpred / (N - 1))
-    Vobs = max(0, Vobs)  # Ensure Vobs is non-negative
-
+    
+    # Resample if necessary
+    while Mobs <= 0 or Vobs <= 0:
+        if Mobs <= 0:
+            Mobs = norm.rvs(Mpred, np.sqrt(Vpred / N))
+        if Vobs <= 0:
+            Vobs = gamma.rvs((N - 1) / 2, scale=2 * Vpred / (N - 1))
+    
     return Robs, Mobs, Vobs
 
 def sign(x):
-    if x < 0:
-        return -1
-    elif x > 0:
-        return 1
-    else:
-        return 0
+    return 1 if x > 0 else (-1 if x < 0 else 0)
 
 def inverse_equations(Robs, Mobs, Vobs):
     epsilon = 1e-10  # Small value to avoid division by zero
