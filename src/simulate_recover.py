@@ -63,7 +63,7 @@ def inverse_equations(Robs, Mobs, Vobs):
 
     L = np.log(Robs / (1-Robs))
     print(f"Putting following into the inverse")
-    print(f"N:{N}")
+    
     print(f"Robs: {Robs}")
     print(f"Mobs: {Mobs}")
     print(f"Vobs: {Vobs}")
@@ -108,6 +108,7 @@ def simulate_and_recover(N, iterations):
         Rpred, Mpred, Vpred = forward_equations(v, a, T)
         Robs, Mobs, Vobs = sampling_distribution(Rpred, Mpred, Vpred, N)
         vest, aest, Test = inverse_equations(Robs, Mobs, Vobs)
+        print(f"N:{N}")
         
         bias = np.array([v, a, T]) - np.array([vest, aest, Test])
         biases.append(bias)
