@@ -58,8 +58,11 @@ class TestEZDiffusion(unittest.TestCase):
         iterations = 100
         biases, _ = simulate_and_recover(N, iterations)
         
-        # Check if recovered parameters are within expected ranges
-        v_est, a_est, T_est = biases + np.array([1.25, 1.25, 0.3])  # Add mean of range to biases
+        # Calculate mean biases across iterations
+        mean_biases = np.mean(biases, axis=0)
+        
+        # Add mean of range to mean biases
+        v_est, a_est, T_est = mean_biases + np.array([1.25, 1.25, 0.3])
         
         self.assertTrue(np.all((v_est >= 0.5) & (v_est <= 2)))
         self.assertTrue(np.all((a_est >= 0.5) & (a_est <= 2)))
