@@ -68,9 +68,9 @@ def inverse_equations(Robs, Mobs, Vobs):
     print(f"Mobs: {Mobs}")
     print(f"Vobs: {Vobs}")
     # Check for potential division by zero or negative values under root
-    if Vobs == 0 or (Robs**2 * L - Robs * L + Robs - 0.5) <= 0:
+    #if Vobs == 0 or (Robs**2 * L - Robs * L + Robs - 0.5) <= 0:
 
-        raise ValueError("Invalid combination of Robs and Vobs")
+        #raise ValueError("Invalid combination of Robs and Vobs")
 
     vest = sign(Robs - 0.5) * ((L*(((Robs**2)*(L)) - (Robs*L) + Robs - 0.5)) / Vobs)**0.25
     print(f"vest: {vest}")
