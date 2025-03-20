@@ -63,6 +63,7 @@ def inverse_equations(Robs, Mobs, Vobs):
 
     L = np.log(Robs / (1-Robs))
     print(f"Putting following into the inverse")
+    print(f"N:{N}")
     print(f"Robs: {Robs}")
     print(f"Mobs: {Mobs}")
     print(f"Vobs: {Vobs}")
