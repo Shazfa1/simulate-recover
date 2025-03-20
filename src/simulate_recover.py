@@ -19,67 +19,62 @@ def forward_equations(v, a, T):
     return Rpred, Mpred, Vpred
 
 def sampling_distribution(Rpred, Mpred, Vpred, N, epsilon=0.1):
-    while True:
-        Tobs = binom.rvs(N, Rpred)
-        Robs = Tobs / N
-        print(f"resampling")
-        if abs(Robs - 0.5) > epsilon and abs(Robs - 1) > epsilon:
-            break
-    
+    Tobs = binom.rvs(N, Rpred)
+    Robs = Tobs / N
     Mobs = norm.rvs(Mpred, (Vpred / N))
     Vobs = gamma.rvs((N - 1) / 2, scale=2 * Vpred / (N - 1))
-    
-    # Resample if necessary
-    while Mobs <= 0 or Vobs <= 0:
-        if Mobs <= 0:
-            Mobs = norm.rvs(Mpred, (Vpred / N))
-        if Vobs <= 0:
-            Vobs = gamma.rvs((N - 1) / 2, scale=2 * Vpred / (N - 1))
-    return Robs, Mobs, Vobs
+#no resampling because it causes infinite loop
 
 def sign(x):
     return 1 if x > 0 else (-1 if x < 0 else 0)
 
 def inverse_equations(Robs, Mobs, Vobs):
-    epsilon = 1e-10  # Small value to avoid division by zero
-
-    # Check for invalid input values
+    epsilon = 1e-06  # Small value to avoid division by zero
+    #if statement to make sure inverse_eqns raises ValueError if R_obs is not between 0 and 1
     if not (0 <= Robs <= 1):
-        raise ValueError(f"Robs must be between 0 and 1, got {Robs}")
-    if Mobs <= 0:
-        raise ValueError(f"Mobs must be positive, got {Mobs}")
-    if Vobs <= 0:
-        raise ValueError(f"Vobs must be positive, got {Vobs}")
+        raise ValueError("Robs must be between 0 and 1")
+    try:
+        Robs = np.clip(Robs, 0.001, 0.999)
+        L = np.log(Robs / (1-Robs))
+    # Handle cases
+    if Vobs <= epsilon or Robs == 0.5:
+        return 0,0, Mobs #takes care of edge cases that lead to negative test values
+    
 
-    # Clip Robs to avoid 0 or 1
-    Robs = np.clip(Robs, epsilon, 1 - epsilon)  # Clip Robs to avoid 0 or 1
-    #Robs = Robs + epsilon
-
-    L = np.log(Robs / (1-Robs))
     # Check for potential division by zero or negative values under root
-    #if Vobs == 0 or (Robs**2 * L - Robs * L + Robs - 0.5) <= 0:
+    if Vobs == 0 or (Robs**2 * L - Robs * L + Robs - 0.5) <= 0:
+        raise ValueError("Invalid combination of Robs and Vobs")
 
-        #raise ValueError("Invalid combination of Robs and Vobs")
+    #split up vest to handle edge cases
+    sq_term = (L*(((Robs**2)*(L)) - (Robs*L) + Robs - 0.5)) / (Vobs + epsilon)
+    vest = np.sign(Robs - 0.5) * (sq_rm**0.25)
 
-    vest = sign(Robs - 0.5) * ((L*(((Robs**2)*(L)) - (Robs*L) + Robs - 0.5)) / Vobs)**0.25
+    
     # Check for division by zero
     if abs(vest) < epsilon:
         raise ValueError("vest is too close to zero, causing division issues")
 
-    aest = L / (vest + epsilon)
+    aest = L / (vest) if vest != 0 else 0
 
     # Check for potential issues in Test calculation
-    denominator = 1 + np.exp(-vest * aest)
+    #break into parts to ensure correct calcualtion
+    expo = np.exp(-vest * aest)
     if denominator < epsilon:
         raise ValueError("Denominator in Test calculation is too close to zero")
+    if vest != 0 and aest !=0:
+        Test = Mobs - ((aest / (2 * vest)) * ((1 - expo) / (1 + expo)))
     
-    Test = (Mobs + epsilon) - ((aest / (2 * vest)) * ((1 - np.exp(-vest * aest)) / denominator))
-    Test = max(0, Test)
+    else:
+        Test = Mobs  
     # Check for negative Test
     if Test < 0:
         raise ValueError(f"Calculated Test is negative: {Test}")
 
     return vest, aest, Test
+
+except (ValueError, ZeroDivisionError):
+    return 0, 0, M_obs  # defaults in case of failure
+
 def simulate_and_recover(N, iterations):
     biases = []
     squared_errors = []
