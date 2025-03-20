@@ -47,7 +47,7 @@ def inverse_equations(Robs, Mobs, Vobs):
     
         #split up vest to handle edge cases
         sq_term = (L*(((Robs**2)*(L)) - (Robs*L) + Robs - 0.5)) / (Vobs + epsilon)
-        vest = np.sign(Robs - 0.5) * (sq_rm**0.25)
+        vest = np.sign(Robs - 0.5) * (sq_term**0.25)
     
         
         # Check for division by zero
