@@ -72,7 +72,7 @@ def inverse_equations(Robs, Mobs, Vobs):
 
         #raise ValueError("Invalid combination of Robs and Vobs")
 
-    vest = sign(Robs - 0.5) * ((L*(((Robs**2)*(L)) - (Robs*L) + Robs - 0.5)) / Vobs)**0.25
+    vest = sign(Robs + epsilon - 0.5) * ((L*(((Robs**2)*(L)) - (Robs*L) + Robs - 0.5)) / Vobs)**0.25
     print(f"vest: {vest}")
     # Check for division by zero
     if abs(vest) < epsilon:
