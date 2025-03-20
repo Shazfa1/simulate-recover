@@ -1,5 +1,5 @@
 #!/bin/bash
-
+# written with ChatGPT
 # Navigate to the src directory where test.py is located
 cd src
 
