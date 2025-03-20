@@ -82,7 +82,7 @@ def inverse_equations(Robs, Mobs, Vobs):
         raise ValueError("Denominator in Test calculation is too close to zero")
 
     print(f"part one:")
-    print(f"{((aest / (2 * vest))}")
+    print(f"{((aest / (2 * vest)))}")
     print(f"{((1 - np.exp(-vest * aest)) / denominator)}")
     
     Test = Mobs - ((aest / (2 * vest)) * ((1 - np.exp(-vest * aest)) / denominator))
