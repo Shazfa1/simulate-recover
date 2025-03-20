@@ -18,10 +18,20 @@ def forward_equations(v, a, T):
     return Rpred, Mpred, Vpred
 
 def sampling_distribution(Rpred, Mpred, Vpred, N, epsilon=0.1):
-    Tobs = binom.rvs(N, Rpred)
-    Robs = Tobs / N
-    Mobs = norm.rvs(Mpred, (Vpred / N))
-    Vobs = gamma.rvs((N - 1) / 2, scale=2 * Vpred / (N - 1))
+    # handle Rpred before starting
+    Rpred = np.clip(R_pred, 0.01, 0.99)
+    Tobs = np.random.binomial(N, Rpred)
+    Robs = min(max(Tobs / N, 0.01), 0.99)
+    #handle extreme values input for mobs
+    
+    sig = np.sqrt(max(Vpred / N, 1e-6)
+    Mobs = np.random.normal(Mpred, sig)
+    if N > 1:
+        
+        Vobs = np.random.gamma((N - 1) / 2, (2 * Vpred) / (N - 1))
+    else:
+        Vobs = max(Vpred * (1 + np.random.normal(0, 0.1)), 1e-6) # add noise
+    return Robs, Mobs, Vobs   
 #no resampling because it causes infinite loop
 
 def sign(x):
