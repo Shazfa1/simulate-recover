@@ -7,7 +7,18 @@ def test_no_noise():
     Rpred, Mpred, Vpred = forward_equations(v, a, T)
     vest, aest, Test = inverse_equations(Rpred, Mpred, Vpred)
     b = np.array([v, a, T]) - np.array([vest, aest, Test])
-    print("No-noise test passed successfully.")
+    
+    # Check if bias is close to zero within a tolerance
+    tolerance = 1e-6  # Adjust this value as needed
+    is_close_to_zero = np.allclose(b, np.zeros_like(b), atol=tolerance)
+    
+    if is_close_to_zero:
+        print("No-noise test passed successfully.")
+    else:
+        print(f"Warning: No-noise test shows small discrepancies. Bias: {b}")
+    
+    # You can still return the result for further analysis if needed
+    return is_close_to_zero, b
 
 def forward_equations(v, a, T):
     y = np.exp(-1*a*v)
