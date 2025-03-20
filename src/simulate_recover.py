@@ -23,9 +23,13 @@ def forward_equations(v, a, T):
     
     return Rpred, Mpred, Vpred
 
-def sampling_distribution(Rpred, Mpred, Vpred, N):
-    Robs = binom.rvs(N, Rpred) / N
-    Mobs = norm.rvs(Mpred, (Vpred / N))
+def sampling_distribution(Rpred, Mpred, Vpred, N, epsilon=1e-6):
+    while True:
+        Robs = binom.rvs(N, Rpred) / N
+        if epsilon < Robs < 1 - epsilon:
+            break
+    
+    Mobs = norm.rvs(Mpred, np.sqrt(Vpred / N))
     Vobs = gamma.rvs((N - 1) / 2, scale=2 * Vpred / (N - 1))
     
     # Resample if necessary
