@@ -1,5 +1,5 @@
 #!/bin/bash
-
+# written with ChatGPT
 # Run the Python script for each sample size
 python3 src/simulate_recover.py --n 10 --iterations 1000
 python3 src/simulate_recover.py --n 40 --iterations 1000
