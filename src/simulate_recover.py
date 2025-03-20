@@ -29,13 +29,13 @@ def sampling_distribution(Rpred, Mpred, Vpred, N, epsilon=1e-6):
         if epsilon < Robs < 1 - epsilon:
             break
     
-    Mobs = norm.rvs(Mpred, np.sqrt(Vpred / N))
+    Mobs = norm.rvs(Mpred, (Vpred / N))
     Vobs = gamma.rvs((N - 1) / 2, scale=2 * Vpred / (N - 1))
     
     # Resample if necessary
     while Mobs <= 0 or Vobs <= 0:
         if Mobs <= 0:
-            Mobs = norm.rvs(Mpred, np.sqrt(Vpred / N))
+            Mobs = norm.rvs(Mpred, (Vpred / N))
         if Vobs <= 0:
             Vobs = gamma.rvs((N - 1) / 2, scale=2 * Vpred / (N - 1))
     print(f"Sampling distribution results:")
