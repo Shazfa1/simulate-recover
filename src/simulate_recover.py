@@ -68,7 +68,7 @@ def inverse_equations(Robs, Mobs, Vobs):
         raise ValueError("Invalid combination of Robs and Vobs")
 
     vest = sign(Robs - 0.5) * ((L*(((Robs**2)*(L)) - (Robs*L) + Robs - 0.5)) / Vobs)**0.25
-
+    print(f"vest: {vest}")
     # Check for division by zero
     if abs(vest) < epsilon:
         raise ValueError("vest is too close to zero, causing division issues")
@@ -81,6 +81,10 @@ def inverse_equations(Robs, Mobs, Vobs):
     if denominator < epsilon:
         raise ValueError("Denominator in Test calculation is too close to zero")
 
+    print(f"part one:")
+    print(f"{((aest / (2 * vest))}")
+    print(f"{((1 - np.exp(-vest * aest)) / denominator)}")
+    
     Test = Mobs - ((aest / (2 * vest)) * ((1 - np.exp(-vest * aest)) / denominator))
 
     # Check for negative Test
