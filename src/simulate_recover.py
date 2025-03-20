@@ -59,8 +59,6 @@ def inverse_equations(Robs, Mobs, Vobs):
         # Check for potential issues in Test calculation
         #break into parts to ensure correct calcualtion
         expo = np.exp(-vest * aest)
-        if denominator < epsilon:
-            raise ValueError("Denominator in Test calculation is too close to zero")
         if vest != 0 and aest !=0:
             Test = Mobs - ((aest / (2 * vest)) * ((1 - expo) / (1 + expo)))
     
