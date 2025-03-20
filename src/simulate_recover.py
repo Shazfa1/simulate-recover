@@ -19,7 +19,7 @@ def forward_equations(v, a, T):
 
 def sampling_distribution(Rpred, Mpred, Vpred, N, epsilon=0.1):
     # handle Rpred before starting
-    Rpred = np.clip(R_pred, 0.01, 0.99)
+    Rpred = np.clip(Rpred, 0.01, 0.99)
     Tobs = np.random.binomial(N, Rpred)
     Robs = min(max(Tobs / N, 0.01), 0.99)
     #handle extreme values input for mobs
