@@ -42,7 +42,7 @@ class TestEZDiffusion(unittest.TestCase):
             
             # Check average bias is close to 0
             avg_bias = np.mean(biases, axis=0)
-            self.assertTrue(np.allclose(avg_bias, np.zeros(3), atol=0.01))
+            self.assertTrue(np.allclose(avg_bias, np.zeros(3), atol=1e-5))
             
             # Store average squared error for comparison
             if N == 10:
