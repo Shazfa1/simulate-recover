@@ -36,44 +36,44 @@ def inverse_equations(Robs, Mobs, Vobs):
     try:
         Robs = np.clip(Robs, 0.001, 0.999)
         L = np.log(Robs / (1-Robs))
-    # Handle cases
-    if Vobs <= epsilon or Robs == 0.5:
-        return 0,0, Mobs #takes care of edge cases that lead to negative test values
+        # Handle cases
+        if Vobs <= epsilon or Robs == 0.5:
+            return 0,0, Mobs #takes care of edge cases that lead to negative test values
+        
     
-
-    # Check for potential division by zero or negative values under root
-    if Vobs == 0 or (Robs**2 * L - Robs * L + Robs - 0.5) <= 0:
-        raise ValueError("Invalid combination of Robs and Vobs")
-
-    #split up vest to handle edge cases
-    sq_term = (L*(((Robs**2)*(L)) - (Robs*L) + Robs - 0.5)) / (Vobs + epsilon)
-    vest = np.sign(Robs - 0.5) * (sq_rm**0.25)
-
+        # Check for potential division by zero or negative values under root
+        if Vobs == 0 or (Robs**2 * L - Robs * L + Robs - 0.5) <= 0:
+            raise ValueError("Invalid combination of Robs and Vobs")
     
-    # Check for division by zero
-    if abs(vest) < epsilon:
-        raise ValueError("vest is too close to zero, causing division issues")
-
-    aest = L / (vest) if vest != 0 else 0
-
-    # Check for potential issues in Test calculation
-    #break into parts to ensure correct calcualtion
-    expo = np.exp(-vest * aest)
-    if denominator < epsilon:
-        raise ValueError("Denominator in Test calculation is too close to zero")
-    if vest != 0 and aest !=0:
-        Test = Mobs - ((aest / (2 * vest)) * ((1 - expo) / (1 + expo)))
+        #split up vest to handle edge cases
+        sq_term = (L*(((Robs**2)*(L)) - (Robs*L) + Robs - 0.5)) / (Vobs + epsilon)
+        vest = np.sign(Robs - 0.5) * (sq_rm**0.25)
     
-    else:
-        Test = Mobs  
-    # Check for negative Test
-    if Test < 0:
-        raise ValueError(f"Calculated Test is negative: {Test}")
+        
+        # Check for division by zero
+        if abs(vest) < epsilon:
+            raise ValueError("vest is too close to zero, causing division issues")
+    
+        aest = L / (vest) if vest != 0 else 0
+    
+        # Check for potential issues in Test calculation
+        #break into parts to ensure correct calcualtion
+        expo = np.exp(-vest * aest)
+        if denominator < epsilon:
+            raise ValueError("Denominator in Test calculation is too close to zero")
+        if vest != 0 and aest !=0:
+            Test = Mobs - ((aest / (2 * vest)) * ((1 - expo) / (1 + expo)))
+    
+        else:
+            Test = Mobs  
+        # Check for negative Test
+        if Test < 0:
+            raise ValueError(f"Calculated Test is negative: {Test}")
+    
+        return vest, aest, Test
 
-    return vest, aest, Test
-
-except (ValueError, ZeroDivisionError):
-    return 0, 0, M_obs  # defaults in case of failure
+    except (ValueError, ZeroDivisionError):
+        return 0, 0, M_obs  # defaults in case of failure
 
 def simulate_and_recover(N, iterations):
     biases = []
