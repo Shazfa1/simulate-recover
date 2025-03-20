@@ -15,6 +15,12 @@ def forward_equations(v, a, T):
     Rpred = 1 / (1 + y)
     Mpred = T + ((a / (2 * v)) * ((1 - y) / (1 + y)))
     Vpred = (a / (2* v**3)) * ((1 - 2*a*v*y - y**2) / (y + 1)**2)
+
+    print(f"Forward equations results:")
+    print(f"Rpred: {Rpred}")
+    print(f"Mpred: {Mpred}")
+    print(f"Vpred: {Vpred}")
+    
     return Rpred, Mpred, Vpred
 
 def sampling_distribution(Rpred, Mpred, Vpred, N):
@@ -28,7 +34,10 @@ def sampling_distribution(Rpred, Mpred, Vpred, N):
             Mobs = norm.rvs(Mpred, np.sqrt(Vpred / N))
         if Vobs <= 0:
             Vobs = gamma.rvs((N - 1) / 2, scale=2 * Vpred / (N - 1))
-    
+    print(f"Sampling distribution results:")
+    print(f"Robs: {Robs}")
+    print(f"Mobs: {Mobs}")
+    print(f"Vobs: {Vobs}")
     return Robs, Mobs, Vobs
 
 def sign(x):
@@ -52,6 +61,8 @@ def inverse_equations(Robs, Mobs, Vobs):
 
     # Check for potential division by zero or negative values under root
     if Vobs == 0 or (Robs**2 * L - Robs * L + Robs - 0.5) <= 0:
+        print(f"Robs: {Robs}")
+        print(f"Vobs: {Vobs}")
         raise ValueError("Invalid combination of Robs and Vobs")
 
     vest = sign(Robs - 0.5) * ((L*(((Robs**2)*(L)) - (Robs*L) + Robs - 0.5)) / Vobs)**0.25
@@ -61,6 +72,7 @@ def inverse_equations(Robs, Mobs, Vobs):
         raise ValueError("vest is too close to zero, causing division issues")
 
     aest = L / (vest + epsilon)
+    print(f"aest: {aest}")
 
     # Check for potential issues in Test calculation
     denominator = 1 + np.exp(-vest * aest)
