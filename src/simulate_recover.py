@@ -39,7 +39,7 @@ def sign(x):
 
 def inverse_equations(Robs, Mobs, Vobs):
     epsilon = 1e-06  # Small value to avoid division by zero
-    #if statement to make sure inverse_eqns raises ValueError if R_obs is not between 0 and 1
+    #if statement to make sure  raises ValueError
     if not (0 <= Robs <= 1):
         raise ValueError("Robs must be between 0 and 1")
     try:
@@ -80,7 +80,7 @@ def inverse_equations(Robs, Mobs, Vobs):
         return vest, aest, Test
 
     except (ValueError, ZeroDivisionError):
-        return 0, 0, M_obs  # defaults in case of failure
+        return 0, 0, Mobs  # defaults in case of failure
 
 def simulate_and_recover(N, iterations):
     biases = []
