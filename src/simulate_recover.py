@@ -92,7 +92,7 @@ def inverse_equations(Robs, Mobs, Vobs):
     print(f"{((1 - np.exp(-vest * aest)) / denominator)}")
     
     Test = (Mobs + epsilon) - ((aest / (2 * vest)) * ((1 - np.exp(-vest * aest)) / denominator))
-
+    Test = max(0, Test)
     # Check for negative Test
     if Test < 0:
         raise ValueError(f"Calculated Test is negative: {Test}")
