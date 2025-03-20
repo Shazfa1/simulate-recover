@@ -24,7 +24,7 @@ def sampling_distribution(Rpred, Mpred, Vpred, N, epsilon=0.1):
     Robs = min(max(Tobs / N, 0.01), 0.99)
     #handle extreme values input for mobs
     
-    sig = np.sqrt(max(Vpred / N, 1e-6)
+    sig = np.sqrt(max(Vpred / N, 1e-6))
     Mobs = np.random.normal(Mpred, sig)
     if N > 1:
         
