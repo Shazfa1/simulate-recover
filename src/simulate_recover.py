@@ -13,7 +13,7 @@ def test_no_noise():
 def forward_equations(v, a, T):
     y = np.exp(-1*a*v)
     Rpred = 1 / (1 + y)
-    Mpred = (a / (2 * v)) * ((1 - y) / (1 + y)) + T
+    Mpred = T + ((a / (2 * v)) * ((1 - y) / (1 + y)))
     Vpred = (a / (2* v**3)) * ((1 - 2*a*v*y - y**2) / (y + 1)**2)
     return Rpred, Mpred, Vpred
 
