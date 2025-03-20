@@ -2,6 +2,9 @@ import numpy as np
 from scipy.stats import norm, binom, gamma
 import matplotlib.pyplot as plt
 
+
+# framework from chatGPT
+
 def test_no_noise():
     v, a, T = 1.0, 1.5, 0.3  # Example true parameters
     Rpred, Mpred, Vpred = forward_equations(v, a, T)
