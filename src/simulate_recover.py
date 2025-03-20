@@ -60,6 +60,7 @@ def inverse_equations(Robs, Mobs, Vobs):
 
     # Clip Robs to avoid 0 or 1
     Robs = np.clip(Robs, epsilon, 1 - epsilon)  # Clip Robs to avoid 0 or 1
+    Robs = Robs + epsilon
 
     L = np.log(Robs / (1-Robs))
     print(f"Putting following into the inverse")
@@ -72,7 +73,7 @@ def inverse_equations(Robs, Mobs, Vobs):
 
         #raise ValueError("Invalid combination of Robs and Vobs")
 
-    vest = sign(Robs + epsilon - 0.5) * ((L*(((Robs**2)*(L)) - (Robs*L) + Robs - 0.5)) / Vobs)**0.25
+    vest = sign(Robs - 0.5) * ((L*(((Robs**2)*(L)) - (Robs*L) + Robs - 0.5)) / Vobs)**0.25
     print(f"vest: {vest}")
     # Check for division by zero
     if abs(vest) < epsilon:
