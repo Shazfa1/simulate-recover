@@ -104,11 +104,12 @@ def simulate_and_recover(N, iterations):
         v = np.random.uniform(0.5, 2)
         a = np.random.uniform(0.5, 2)
         T = np.random.uniform(0.1, 0.5)
-        
+
+        print(f"N:{N}")
         Rpred, Mpred, Vpred = forward_equations(v, a, T)
         Robs, Mobs, Vobs = sampling_distribution(Rpred, Mpred, Vpred, N)
         vest, aest, Test = inverse_equations(Robs, Mobs, Vobs)
-        print(f"N:{N}")
+        
         
         bias = np.array([v, a, T]) - np.array([vest, aest, Test])
         biases.append(bias)
