@@ -23,10 +23,11 @@ def forward_equations(v, a, T):
     
     return Rpred, Mpred, Vpred
 
-def sampling_distribution(Rpred, Mpred, Vpred, N, epsilon=1e-6):
+def sampling_distribution(Rpred, Mpred, Vpred, N, epsilon=0.1):
     while True:
-        Robs = binom.rvs(N, Rpred) / N
-        if epsilon < Robs < 1 - epsilon:
+        Tobs = binom.rvs(N, Rpred)
+        Robs = Tobs / N
+        if abs(Robs - 0.5) > epsilon and abs(Robs - 1) > epsilon:
             break
     
     Mobs = norm.rvs(Mpred, (Vpred / N))
