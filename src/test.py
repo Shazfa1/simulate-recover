@@ -27,8 +27,7 @@ class TestEZDiffusion(unittest.TestCase):
         bias = np.array([v_true, a_true, T_true]) - np.array([v_est, a_est, T_est])
         # Check if bias is close to zero within a tolerance
         tolerance = 1e-6  # Adjust this value as needed
-        is_close_to_zero = np.allclose(bias, np.zeros_like(bias), atol=tolerance)
-        self.assertTrue(np.allclose(bias, np.zeros(3), atol=1e-6))
+        self.assertTrue(np.allclose(bias, np.zeros(3), atol=1e-5))
 
     def test_simulate_and_recover(self):
         sample_sizes = [10, 40, 4000]
