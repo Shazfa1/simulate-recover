@@ -22,6 +22,7 @@ def sampling_distribution(Rpred, Mpred, Vpred, N, epsilon=0.1):
     while True:
         Tobs = binom.rvs(N, Rpred)
         Robs = Tobs / N
+        print(f"resampling")
         if abs(Robs - 0.5) > epsilon and abs(Robs - 1) > epsilon:
             break
     
